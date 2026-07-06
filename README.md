@@ -241,13 +241,13 @@ Tennis Match Winner Predictor/
 Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/Tennis-Match-Prediction.git
+git clone https://github.com/yourusername/Tennis-Match-Winner-Predictor.git
 ```
 
 Move into the directory
 
 ```bash
-cd Tennis-Match-Prediction
+cd Tennis-Match-Winner-Predictor
 ```
 
 Install dependencies
@@ -256,10 +256,10 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Run the notebook
+Run the application
 
 ```bash
-jupyter notebook
+python app.py
 ```
 
 ---
