@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎾 Tennis Match Predictor</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ── Reset & Base ── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #eef2f6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Full‑page Background ── */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 30%, #1a2a4a, #0b0e1a 75%);
+            overflow: hidden;
+        }
+
+        /* Tennis‑inspired geometric pattern (subtle) */
+        .bg-layer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(45deg,
+                    transparent 0px,
+                    transparent 60px,
+                    rgba(255, 215, 0, 0.02) 60px,
+                    rgba(255, 215, 0, 0.02) 61px);
+            pointer-events: none;
+        }
+
+        /* Floating gold orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbDrift 30s ease-in-out infinite alternate;
+        }
+        .orb:nth-child(1) {
+            width: 350px;
+            height: 350px;
+            top: -8%;
+            left: -5%;
+            background: rgba(255, 215, 0, 0.08);
+            animation-duration: 32s;
+        }
+        .orb:nth-child(2) {
+            width: 450px;
+            height: 450px;
+            bottom: -10%;
+            right: -8%;
+            background: rgba(255, 140, 0, 0.05);
+            animation-duration: 38s;
+            animation-delay: -12s;
+        }
+        .orb:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 55%;
+            background: rgba(255, 215, 0, 0.04);
+            animation-duration: 26s;
+            animation-delay: -6s;
+        }
+
+        @keyframes orbDrift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(80px, -100px) scale(1.1);
+            }
+            66% {
+                transform: translate(-60px, 70px) scale(0.9);
+            }
+            100% {
+                transform: translate(40px, 50px) scale(1.05);
+            }
+        }
+
+        /* Floating tennis balls (gold tint) */
+        .float-ball {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.06;
+            pointer-events: none;
+            animation: ballFloat 24s ease-in-out infinite;
+        }
+        .float-ball:nth-child(4) {
+            top: 12%;
+            left: 6%;
+            animation-delay: 0s;
+            font-size: 4rem;
+        }
+        .float-ball:nth-child(5) {
+            bottom: 10%;
+            right: 4%;
+            animation-delay: -14s;
+            font-size: 5rem;
+        }
+        .float-ball:nth-child(6) {
+            top: 55%;
+            left: 82%;
+            animation-delay: -20s;
+            font-size: 3.6rem;
+        }
+        .float-ball:nth-child(7) {
+            top: 30%;
+            left: 40%;
+            animation-delay: -7s;
+            font-size: 2.4rem;
+        }
+
+        @keyframes ballFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(60px, -80px) rotate(30deg) scale(1.1);
+            }
+            50% {
+                transform: translate(-50px, 60px) rotate(60deg) scale(0.9);
+            }
+            75% {
+                transform: translate(70px, 40px) rotate(90deg) scale(1.05);
+            }
+        }
+
+        /* ── Main Content ── */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 2.5rem 3rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Navbar (minimal) ── */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0 1.2rem;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #f5f7fa;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-brand .icon {
+            font-size: 2rem;
+        }
+
+        .nav-brand span {
+            background: linear-gradient(135deg, #ffd54f, #ffb300);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffd54f;
+        }
+
+        .nav-links .btn-nav {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            color: #ffd54f;
+            font-weight: 600;
+        }
+
+        .nav-links .btn-nav:hover {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        /* ── Hero Section ── */
+        .hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 3rem;
+            padding: 2.5rem 0 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-content {
+            flex: 1 1 480px;
+            max-width: 600px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 215, 0, 0.06);
+            padding: 0.25rem 1.2rem 0.25rem 1rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 215, 0, 0.7);
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-title {
+            font-size: 3.6rem;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: #f5f7fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, #ffd54f, #ff8f00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.55);
+            max-width: 440px;
+            line-height: 1.6;
+            margin: 0.5rem 0 1.2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin: 1.2rem 0 1.8rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .stat-item .value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffd54f;
+            letter-spacing: -0.01em;
+        }
+
+        .stat-item .model {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 2.6rem;
+            background: linear-gradient(135deg, #ffb300, #ff8f00);
+            color: #0b0e1a;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 179, 0, 0.25);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(255, 179, 0, 0.4);
+        }
+
+        .btn-primary .arrow {
+            font-size: 1.2rem;
+            transition: 0.3s ease;
+        }
+
+        .btn-primary:hover .arrow {
+            transform: translateX(6px);
+        }
+
+        .btn-secondary {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-bottom: 0.1rem;
+            transition: 0.25s ease;
+        }
+
+        .btn-secondary:hover {
+            color: #ffd54f;
+            border-bottom-color: #ffd54f;
+        }
+
+        /* ── Right side illustration (tennis ball graphic) ── */
+        .hero-visual {
+            flex: 1 1 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .hero-visual .big-ball {
+            font-size: 12rem;
+            opacity: 0.15;
+            animation: pulseBall 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.1));
+        }
+
+        @keyframes pulseBall {
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.05) rotate(12deg);
+            }
+        }
+
+        .hero-visual .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 215, 0, 0.04);
+            width: 280px;
+            height: 280px;
+            animation: ringSpin 20s linear infinite;
+        }
+
+        .hero-visual .ring:nth-child(2) {
+            width: 340px;
+            height: 340px;
+            border-color: rgba(255, 215, 0, 0.02);
+            animation-duration: 26s;
+            animation-direction: reverse;
+        }
+
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Author & Disclaimer ── */
+        .footer-meta {
+            margin-top: 2.5rem;
+            padding-top: 1.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.2rem 2rem;
+            align-items: center;
+        }
+
+        .author-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .author-badge .avatar {
+            font-size: 1.6rem;
+        }
+
+        .author-badge .info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+        }
+
+        .author-badge .name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #eef2f6;
+        }
+
+        .author-badge .institute {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.35);
+            font-weight: 500;
+        }
+
+        .author-badge .institute i {
+            font-style: normal;
+            background: rgba(255, 215, 0, 0.06);
+            padding: 0.05rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.04);
+        }
+
+        .disclaimer {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            line-height: 1.5;
+            text-align: right;
+        }
+
+        .disclaimer strong {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        /* ── Feature row (bottom) ── */
+        .feature-row {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.02em;
+        }
+
+        .feature-item .emoji {
+            font-size: 1rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero-visual .big-ball {
+                font-size: 8rem;
+            }
+            .hero-visual .ring {
+                width: 200px;
+                height: 200px;
+            }
+            .hero-visual .ring:nth-child(2) {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .main-wrapper {
+                padding: 1.2rem 1.2rem 2rem;
+            }
+            .hero {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+                padding: 1.2rem 0 0.5rem;
+            }
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            .hero-sub {
+                font-size: 1rem;
+            }
+            .hero-stats {
+                gap: 1.2rem;
+            }
+            .hero-visual {
+                align-self: center;
+                width: 100%;
+            }
+            .hero-visual .big-ball {
+                font-size: 6rem;
+            }
+            .hero-visual .ring {
+                width: 160px;
+                height: 160px;
+            }
+            .hero-visual .ring:nth-child(2) {
+                width: 200px;
+                height: 200px;
+            }
+            .footer-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            .disclaimer {
+                text-align: left;
+                max-width: 100%;
+            }
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-links {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .feature-row {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 440px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            .btn-primary {
+                padding: 0.7rem 1.8rem;
+                font-size: 0.95rem;
+            }
+            .nav-brand {
+                font-size: 1rem;
+            }
+            .nav-links a {
+                font-size: 0.75rem;
+            }
+            .stat-item .value {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Background ─── -->
+    <div class="bg-layer">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="float-ball">🎾</div>
+        <div class="float-ball">🎾</div>
+        <div class="float-ball">🎾</div>
+        <div class="float-ball">🎾</div>
+    </div>
+
+    <!-- ─── Main Content ─── -->
+    <div class="main-wrapper">
+
+        <!-- ─── Navbar ─── -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span class="icon">🏆</span>
+                <span>MatchPredictor</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/predict" class="btn-nav">Predict</a>
+                <a href="#" style="pointer-events:none; opacity:0.4;">About</a>
+            </div>
+        </nav>
+
+        <!-- ─── Hero ─── -->
+        <section class="hero">
+
+            <div class="hero-content">
+                <div class="hero-badge">⚡ AI‑powered forecasting</div>
+                <h1 class="hero-title">
+                    Predict the<br /><span class="accent">Next Winner</span>
+                </h1>
+                <p class="hero-sub">
+                    Use machine learning to forecast tennis match outcomes.
+                    Enter player stats, surface, tournament stage – get an instant prediction.
+                </p>
+
+                <div class="hero-stats">
+                    <span class="stat-item">
+                        <span class="value">70%</span>
+                        <span class="model">accuracy</span>
+                    </span>
+                    <span class="stat-item">
+                        <span>⚡</span>
+                        <span class="model">XGBoost</span>
+                    </span>
+                    <span class="stat-item">
+                        <span>📊</span>
+                        <span class="model">12+ features</span>
+                    </span>
+                </div>
+
+                <div class="hero-actions">
+                    <a href="/predict" class="btn-primary">
+                        <span>Start Predicting</span>
+                        <span class="arrow">→</span>
+                    </a>
+                    <a href="#disclaimer" class="btn-secondary">Learn more</a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="big-ball">🎾</div>
+            </div>
+
+        </section>
+
+        <!-- ─── Footer Meta ─── -->
+        <div class="footer-meta" id="disclaimer">
+
+            <div class="author-badge">
+                <span class="avatar">👨‍💻</span>
+                <div class="info">
+                    <span class="name">Abhinav Singh</span>
+                    <span class="institute"><i>🏛️ IIT Bhubaneswar</i></span>
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                <strong>⚠️ Disclaimer:</strong> Tennis is unpredictable — results are for fun and analysis.
+                Not guaranteed for betting or professional decisions.
+            </div>
+
+        </div>
+
+        <!-- Feature hints -->
+        <div class="feature-row">
+            <span class="feature-item"><span class="emoji">🏟️</span> All surfaces</span>
+            <span class="feature-item"><span class="emoji">📈</span> Real‑time</span>
+            <span class="feature-item"><span class="emoji">🎯</span> 70% accuracy</span>
+            <span class="feature-item"><span class="emoji">🧠</span> XGBoost</span>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎾 Match Predictor · Home</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ─── Reset & Base ─── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0f1a0f;
+            color: #e8f5e9;
+            overflow-x: hidden;
+        }
+
+        /* ─── Full‑Page Tennis Court Background ─── */
+        .court-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 50% 40%, #1e4d1e 0%, #0f1a0f 80%);
+            overflow: hidden;
+        }
+
+        /* Court lines (subtle) */
+        .court-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                /* Center line */
+                linear-gradient(90deg, transparent 49.7%, rgba(255, 255, 255, 0.04) 49.7%, rgba(255, 255, 255, 0.04) 50.3%, transparent 50.3%),
+                /* Net line */
+                linear-gradient(0deg, transparent 49.7%, rgba(255, 255, 255, 0.06) 49.7%, rgba(255, 255, 255, 0.06) 50.3%, transparent 50.3%),
+                /* Service line top */
+                linear-gradient(0deg, transparent 35%, rgba(255, 255, 255, 0.03) 35%, rgba(255, 255, 255, 0.03) 35.4%, transparent 35.4%),
+                /* Service line bottom */
+                linear-gradient(0deg, transparent 64.6%, rgba(255, 255, 255, 0.03) 64.6%, rgba(255, 255, 255, 0.03) 65%, transparent 65%);
+            background-size: 100% 100%;
+            pointer-events: none;
+        }
+
+        /* Floating tennis balls (large, subtle) */
+        .court-ball {
+            position: absolute;
+            font-size: 6rem;
+            opacity: 0.04;
+            pointer-events: none;
+            animation: courtBallFloat 30s ease-in-out infinite;
+        }
+        .court-ball:nth-child(1) {
+            top: 8%;
+            left: 5%;
+            animation-delay: 0s;
+            font-size: 8rem;
+        }
+        .court-ball:nth-child(2) {
+            bottom: 12%;
+            right: 3%;
+            animation-delay: -12s;
+            font-size: 10rem;
+        }
+        .court-ball:nth-child(3) {
+            top: 45%;
+            left: 75%;
+            animation-delay: -20s;
+            font-size: 6rem;
+        }
+        .court-ball:nth-child(4) {
+            top: 20%;
+            right: 20%;
+            animation-delay: -6s;
+            font-size: 5rem;
+        }
+
+        @keyframes courtBallFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(40px, -60px) rotate(30deg) scale(1.05);
+            }
+            50% {
+                transform: translate(-30px, 50px) rotate(60deg) scale(0.95);
+            }
+            75% {
+                transform: translate(50px, 30px) rotate(90deg) scale(1.02);
+            }
+        }
+
+        /* ─── Main Content ─── */
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 4rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ─── Hero Section ─── */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 2.5rem 0 1.5rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(144, 238, 144, 0.5);
+            background: rgba(144, 238, 144, 0.06);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            border: 1px solid rgba(144, 238, 144, 0.06);
+            width: fit-content;
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #e8f5e9 20%, #66bb6a 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #fdd835, #ffb300);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: rgba(200, 230, 200, 0.6);
+            font-weight: 400;
+            max-width: 420px;
+            line-height: 1.6;
+            margin-top: 0.2rem;
+        }
+
+        .hero-right {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.6rem 1.6rem 0.6rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-right .avatar {
+            font-size: 2rem;
+        }
+
+        .hero-right .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-right .name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #e8f5e9;
+        }
+
+        .hero-right .institute {
+            font-size: 0.7rem;
+            color: rgba(200, 230, 200, 0.4);
+            font-weight: 500;
+        }
+
+        /* ─── Form Card ─── */
+        .form-card {
+            margin-top: 2.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            border-radius: 32px;
+            padding: 2.8rem 3rem 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            animation: cardFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+            transform: translateY(25px);
+        }
+
+        @keyframes cardFadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-card-header .icon {
+            font-size: 1.6rem;
+        }
+
+        .form-card-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e8f5e9;
+            letter-spacing: -0.01em;
+        }
+
+        .form-card-header .sub {
+            font-size: 0.8rem;
+            color: rgba(200, 230, 200, 0.35);
+            font-weight: 400;
+            margin-left: 0.4rem;
+        }
+
+        /* ─── Player Row ─── */
+        .players-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .player-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .player-field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(200, 230, 200, 0.4);
+        }
+
+        .player-field label .badge {
+            font-weight: 400;
+            text-transform: none;
+            font-size: 0.6rem;
+            color: rgba(200, 230, 200, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            margin-left: 0.4rem;
+        }
+
+        .player-field input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #e8f5e9;
+            transition: all 0.25s ease;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .player-field input:focus {
+            border-color: rgba(144, 238, 144, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 4px rgba(144, 238, 144, 0.04);
+        }
+
+        .player-field input::placeholder {
+            color: rgba(200, 230, 200, 0.15);
+        }
+
+        /* ─── Form Grid ─── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.2rem 1.8rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .form-group label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(200, 230, 200, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .form-group label .hint {
+            font-weight: 400;
+            color: rgba(200, 230, 200, 0.15);
+            font-size: 0.55rem;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #e8f5e9;
+            transition: all 0.25s ease;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2380c080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.6rem;
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #1a2a1a;
+            color: #e8f5e9;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: rgba(144, 238, 144, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 0 4px rgba(144, 238, 144, 0.03);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(200, 230, 200, 0.12);
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* ─── Full‑width groups ─── */
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        /* ─── Submit & Result Row ─── */
+        .action-row {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-top: 0.8rem;
+            align-items: stretch;
+        }
+
+        .btn-submit {
+            padding: 1rem 2rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: #f0faf0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 28px rgba(27, 94, 32, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 60%);
+            pointer-events: none;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(27, 94, 32, 0.45);
+            background: linear-gradient(135deg, #388e3c, #1b5e20);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 16px rgba(27, 94, 32, 0.3);
+        }
+
+        .btn-submit .sparkle {
+            font-size: 1.2rem;
+            animation: sparkle 2.4s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(18deg);
+            }
+        }
+
+        .btn-submit.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .btn-submit.loading .btn-text::after {
+            content: '…';
+            animation: dots 1.2s steps(4) infinite;
+        }
+        @keyframes dots {
+            0% {
+                content: '';
+            }
+            25% {
+                content: '.';
+            }
+            50% {
+                content: '..';
+            }
+            75% {
+                content: '...';
+            }
+            100% {
+                content: '';
+            }
+        }
+
+        /* ─── Result Box ─── */
+        .result-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            border-radius: 18px;
+            background: rgba(144, 238, 144, 0.03);
+            border: 1px solid rgba(144, 238, 144, 0.06);
+            text-align: center;
+            min-height: 70px;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .result-box.has-result {
+            background: rgba(144, 238, 144, 0.06);
+            border-color: rgba(144, 238, 144, 0.12);
+            animation: resultPop 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes resultPop {
+            0% {
+                transform: scale(0.96);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .result-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(200, 230, 200, 0.25);
+            font-weight: 600;
+        }
+
+        .result-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5d6a7, #66bb6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.01em;
+        }
+
+        .result-name .trophy {
+            -webkit-text-fill-color: initial;
+            color: #fdd835;
+            margin-right: 0.2rem;
+        }
+
+        .result-sub {
+            font-size: 0.75rem;
+            color: rgba(200, 230, 200, 0.25);
+            font-weight: 500;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .hero-title {
+                font-size: 2.6rem;
+            }
+            .form-card {
+                padding: 2rem 1.8rem 2.4rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .hero {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 1rem;
+            }
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            .hero-right {
+                align-self: flex-start;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .action-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .form-card {
+                padding: 1.5rem 1.2rem 1.8rem;
+                border-radius: 24px;
+            }
+            .players-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .main-wrapper {
+                padding: 1.2rem 1rem 2rem;
+            }
+            .result-name {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 440px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            .hero-sub {
+                font-size: 0.9rem;
+            }
+            .form-card {
+                padding: 1.2rem 0.8rem 1.4rem;
+                border-radius: 18px;
+            }
+            .btn-submit {
+                font-size: 0.95rem;
+                padding: 0.8rem 1.2rem;
+            }
+            .result-name {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(144, 238, 144, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(144, 238, 144, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Full‑Page Court Background ─── -->
+    <div class="court-bg">
+        <div class="court-ball">🎾</div>
+        <div class="court-ball">🎾</div>
+        <div class="court-ball">🎾</div>
+        <div class="court-ball">🎾</div>
+    </div>
+
+    <!-- ─── Main Content ─── -->
+    <div class="main-wrapper">
+
+        <!-- ─── Hero ─── -->
+        <header class="hero">
+            <div class="hero-left">
+                <span class="hero-badge">⚡ AI‑powered prediction</span>
+                <h1 class="hero-title">
+                    Match<br /><span class="highlight">Predictor</span>
+                </h1>
+                <p class="hero-sub">
+                    Enter match stats &amp; surface data — get an instant winner forecast.
+                </p>
+            </div>
+            <div class="hero-right">
+                <span class="avatar">👨‍💻</span>
+                <div class="info">
+                    <span class="name">Abhinav Singh</span>
+                    <span class="institute">IIT Bhubaneswar</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ─── Form Card ─── -->
+        <div class="form-card">
+
+            <div class="form-card-header">
+                <span class="icon">📋</span>
+                <h2>Match Details <span class="sub">— fill in the fields below</span></h2>
+            </div>
+
+            <form action="/predict" method="POST" id="predictForm">
+
+                <!-- Player Names -->
+                <div class="players-row">
+                    <div class="player-field">
+                        <label>
+                            🎾 Player 1
+                            <span class="badge">result = 1</span>
+                        </label>
+                        <input
+                        type="text"
+                        name="player1_name"
+                        id="player1_name"
+                        value="{{ player1_name if player1_name else '' }}"
+                        placeholder="e.g. Novak Djokovic"
+                        required
+                        />
+                    </div>
+                    <div class="player-field">
+                        <label>
+                            🎾 Player 2
+                            <span class="badge">result = 0</span>
+                        </label>
+                        <input
+                        type="text"
+                        name="player2_name"
+                        id="player2_name"
+                        value="{{ player2_name if player2_name else '' }}"
+                        placeholder="e.g. Carlos Alcaraz"
+                        required
+                        />
+                    </div>
+                </div>
+
+                <!-- Feature Grid -->
+                <div class="form-grid">
+
+                    <!-- Court -->
+                    <div class="form-group">
+                        <label>Court <span class="hint">(venue)</span></label>
+                        <select name="court" required>
+                            <option value="Outdoor">Outdoor</option>
+                            <option value="Indoor">Indoor</option>
+                        </select>
+                    </div>
+
+                    <!-- Surface -->
+                    <div class="form-group">
+                        <label>Surface <span class="hint">(playing surface)</span></label>
+                        <select name="surface" required>
+                            <option value="Hard">Hard</option>
+                            <option value="Clay">Clay</option>
+                            <option value="Grass">Grass</option>
+                            <option value="Carpet">Carpet</option>
+                        </select>
+                    </div>
+
+                    <!-- Round -->
+                    <div class="form-group">
+                        <label>Round <span class="hint">(stage)</span></label>
+                        <select name="round" required>
+                            <option value="1st Round">1st Round</option>
+                            <option value="2nd Round">2nd Round</option>
+                            <option value="3rd Round">3rd Round</option>
+                            <option value="4th Round">4th Round</option>
+                            <option value="Quarterfinals">Quarterfinals</option>
+                            <option value="Semifinals">Semifinals</option>
+                            <option value="The Final">The Final</option>
+                        </select>
+                    </div>
+
+                    <!-- Best of -->
+                    <div class="form-group">
+                        <label>Best of <span class="hint">(sets)</span></label>
+                        <select name="best_of" required>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <!-- Season -->
+                    <div class="form-group">
+                        <label>Season <span class="hint">(time of year)</span></label>
+                        <select name="season" required>
+                            <option value="Winter">Winter</option>
+                            <option value="Spring">Spring</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Autumn">Autumn</option>
+                        </select>
+                    </div>
+
+                    <!-- Higher Rank -->
+                    <div class="form-group">
+                        <label>Higher Rank <span class="hint">(1 or 2)</span></label>
+                        <select name="higher_rank_player" required>
+                            <option value="1">Player 1</option>
+                            <option value="0">Player 2</option>
+                        </select>
+                    </div>
+
+                    <!-- Abs Rank Diff -->
+                    <div class="form-group">
+                        <label>Rank Difference <span class="hint">(absolute)</span></label>
+                        <input
+                        type="number"
+                        name="abs_rank_diff"
+                        placeholder="e.g. 47"
+                        min="0"
+                        max="999"
+                        step="1"
+                        required
+                        />
+                    </div>
+
+                    <!-- H2H Win% -->
+                    <div class="form-group">
+                        <label>H2H Win% (P1) <span class="hint">(0–1)</span></label>
+                        <input
+                        type="number"
+                        name="h2h_winpct"
+                        placeholder="e.g. 0.65"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        required
+                        />
+                    </div>
+
+                    <!-- Recent Win% P1 -->
+                    <div class="form-group">
+                        <label>Recent Win% (P1) <span class="hint">(0–1)</span></label>
+                        <input
+                        type="number"
+                        name="recentwinpct_1"
+                        placeholder="e.g. 0.72"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        required
+                        />
+                    </div>
+
+                    <!-- Recent Win% P2 -->
+                    <div class="form-group">
+                        <label>Recent Win% (P2) <span class="hint">(0–1)</span></label>
+                        <input
+                        type="number"
+                        name="recentwinpct_2"
+                        placeholder="e.g. 0.58"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        required
+                        />
+                    </div>
+
+                    <!-- Surface Win% P1 -->
+                    <div class="form-group">
+                        <label>Surface Win% (P1) <span class="hint">(0–1)</span></label>
+                        <input
+                        type="number"
+                        name="surface_winpct_1"
+                        placeholder="e.g. 0.68"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        required
+                        />
+                    </div>
+
+                    <!-- Surface Win% P2 -->
+                    <div class="form-group">
+                        <label>Surface Win% (P2) <span class="hint">(0–1)</span></label>
+                        <input
+                        type="number"
+                        name="surface_winpct_2"
+                        placeholder="e.g. 0.55"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        required
+                        />
+                    </div>
+
+                    <!-- ─── Action Row ─── -->
+                    <div class="action-row">
+
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <span class="sparkle">⚡</span>
+                            <span class="btn-text">Predict Winner</span>
+                        </button>
+
+                        <!-- Result Box -->
+                        <div class="result-box {% if results %}has-result{% endif %}">
+                            {% if results %}
+                                <span class="result-label">🏆 Winner</span>
+                                <span class="result-name" id="resultName">
+                                    <span class="trophy">👑</span> {{ results }}
+                                </span>
+                                <span class="result-sub">predicted by AI</span>
+                            {% else %}
+                                <span class="result-label">🏟️ Prediction</span>
+                                <span class="result-sub">Fill in all fields &amp; click predict</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- ─── JavaScript ─── -->
+    <script>
+        (function() {
+            const form = document.getElementById('predictForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // ── Loading state ──
+            form.addEventListener('submit', function() {
+                submitBtn.classList.add('loading');
+                const btnText = submitBtn.querySelector('.btn-text');
+                btnText.textContent = 'Predicting';
+            });
+
+            // ── Replace "Player 1"/"Player 2" with actual names ──
+            const resultNameSpan = document.getElementById('resultName');
+            if (resultNameSpan) {
+                let text = resultNameSpan.textContent.trim();
+                const trophySpan = resultNameSpan.querySelector('.trophy');
+                if (trophySpan) {
+                    const parts = text.split('👑');
+                    if (parts.length > 1) {
+                        text = parts[1].trim();
+                    } else {
+                        text = text.replace('👑', '').trim();
+                    }
+                }
+
+                const p1 = document.getElementById('player1_name')?.value;
+                const p2 = document.getElementById('player2_name')?.value;
+
+                let newName = text;
+                if (text === 'Player 1' && p1) newName = p1;
+                else if (text === 'Player 2' && p2) newName = p2;
+
+                if (newName !== text) {
+                    while (resultNameSpan.firstChild) {
+                        resultNameSpan.removeChild(resultNameSpan.firstChild);
+                    }
+                    const trophy = document.createElement('span');
+                    trophy.className = 'trophy';
+                    trophy.textContent = '👑';
+                    resultNameSpan.appendChild(trophy);
+                    resultNameSpan.appendChild(document.createTextNode(' ' + newName));
+                }
+            }
+        })();
+    </script>
+
+</body>
+</html>
