@@ -1,10 +1,9 @@
 from flask import Flask, request, render_template
+import os
 
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
-application = Flask(__name__)
-app = application
-
+app= Flask(__name__)
 
 @app.route('/')
 def index():
@@ -60,4 +59,5 @@ def predict_datapoint():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
