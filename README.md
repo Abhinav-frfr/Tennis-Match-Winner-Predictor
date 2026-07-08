@@ -262,6 +262,9 @@ Run the application
 python app.py
 ```
 
+_**Or Directly Use Deployed Link**_ </br></br>
+**URL** :- https://preddtennis.onrender.com
+
 ---
 
 # 📈 Future Improvements
